@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Görsel Format & Kalite Dönüştürücü</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); width: 100%; max-width: 550px; text-align: center; }
+        h1 { color: #333; margin-bottom: 8px; font-size: 24px; }
+        p { color: #666; font-size: 14px; margin-bottom: 24px; }
+        
+        /* Sürükle Bırak Çerçevesi */
+        .drop-zone { border: 2px dashed #007bff; border-radius: 8px; padding: 40px 20px; cursor: pointer; transition: background 0.3s, border-color 0.3s; background: #f8faff; }
+        .drop-zone:hover, .drop-zone.drag-over { background: #e6f0ff; }
+        .drop-zone p { margin: 0; color: rgb(0, 123, 255); font-weight: 600; }
+        
+        /* Hata durumunda kırmızı, başarıda yeşil olan dinamik sınıflar */
+        .drop-zone.error-state { border-color: #dc3545; background: #fff5f5; }
+        .drop-zone.error-state p { color: #dc3545; }
+
+        .file-list { margin-top: 15px; max-height: 150px; overflow-y: auto; text-align: left; background: #f9f9f9; padding: 10px; border-radius: 6px; display: none; border: 1px solid #eee; }
+        .file-item { font-size: 13px; color: #555; padding: 6px 0; border-bottom: 1px solid #f1f1f1; display: flex; justify-content: space-between; align-items: center; }
+        .file-item:last-child { border-bottom: none; }
+        
+        .format-badge { background: #e6f0ff; color: #007bff; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; }
+        .arrow-badge { color: #888; font-weight: bold; margin: 0 4px; }
+        .target-badge { background: #28a745; color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; }
+        .target-badge.pdf-type { background: #dc3545; }
+
+        .settings-panel { background: #fdfdfd; border: 1px solid #eaeaea; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: left; }
+        .setting-row { margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+        .setting-row:last-child { margin-bottom: 0; }
+        label { font-weight: 600; color: #444; font-size: 14px; }
+        select { padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; outline: none; width: 170px; }
+        
+        .slider-container { display: flex; align-items: center; gap: 10px; width: 150px; }
+        .slider-container input { flex: 1; cursor: pointer; }
+        .slider-value { font-weight: bold; color: #007bff; font-size: 14px; min-width: 35px; text-align: right; }
+
+        button { background: #007bff; color: white; border: none; padding: 12px 24px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; transition: background 0.2s; }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .loader { display: none; margin-top: 15px; color: #007bff; font-weight: bold; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Multi-Format Dönüştürücü</h1>
+    <p>Görsellerinizi optimize edin, formatlarını değiştirin veya tek tıkla PDF yapın.</p>
+
+    <input type="file" id="fileInput" accept=".png,.jpg,.jpeg,.webp" multiple style="display: none;">
+
+    <div class="drop-zone" id="dropZone">
+        <p id="dropZoneText">Görselleri buraya sürükleyin veya tıklayarak seçin</p>
+    </div>
+
+    <div class="file-list" id="fileList"></div>
+
+    <div class="settings-panel">
+        <div class="setting-row">
+            <label for="formatSelect">Dönüştürülecek Hedef Format:</label>
+            <select id="formatSelect">
+                <option value="webp">WebP (Önerilen)</option>
+                <option value="jpeg">JPEG</option>
+                <option value="png">PNG (Kayıpsız)</option>
+                <option value="pdf">PDF (Belge Birleştirme)</option>
+            </select>
+        </div>
+        
+        <div class="setting-row">
+            <label for="qualitySlider">Görüntü Kalitesi:</label>
+            <div class="slider-container">
+                <input type="range" id="qualitySlider" min="10" max="100" value="100">
+                <span class="slider-value" id="qualityValue">%100</span>
+            </div>
+        </div>
+    </div>
+
+    <button id="convertBtn" disabled>Dönüştürmeyi Başlat</button>
+    <div class="loader" id="loader">İşlem yapılıyor, lütfen bekleyin...</div>
+</div>
+
+<script>
+    const dropZone = document.getElementById('dropZone');
+    const dropZoneText = document.getElementById('dropZoneText');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+    const convertBtn = document.getElementById('convertBtn');
+    const formatSelect = document.getElementById('formatSelect');
+    const qualitySlider = document.getElementById('qualitySlider');
+    const qualityValue = document.getElementById('qualityValue');
+    const loader = document.getElementById('loader');
+
+    let selectedFiles = [];
+
+    qualitySlider.addEventListener('input', (e) => {
+        qualityValue.textContent = `%${e.target.value}`;
+    });
+
+    formatSelect.addEventListener('change', (e) => {
+        const val = e.target.value;
+        if(val === 'png' || val === 'pdf') {
+            qualitySlider.disabled = true;
+            qualityValue.textContent = "N/A";
+        } else {
+            qualitySlider.disabled = false;
+            qualityValue.textContent = `%${qualitySlider.value}`;
+        }
+        if(selectedFiles.length > 0) renderFileList();
+    });
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+    
+    dropZone.addEventListener('dragover', (e) => { 
+        e.preventDefault(); 
+        dropZone.classList.add('drag-over'); 
+    });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', (e) => { 
+        e.preventDefault(); 
+        dropZone.classList.remove('drag-over'); 
+        handleFiles(e.dataTransfer.files); 
+    });
+
+    function handleFiles(files) {
+        if (files.length > 0) {
+            selectedFiles = Array.from(files);
+            
+            // Kırmızı hata durumunu sıfırlıyoruz
+            dropZone.classList.remove('error-state');
+            dropZoneText.textContent = "Görselleri buraya sürükleyin veya tıklayarak seçin";
+
+            renderFileList();
+            convertBtn.disabled = false;
+            convertBtn.textContent = `Dönüşümü Başlat (${selectedFiles.length} Dosya)`;
+        }
+    }
+
+    function renderFileList() {
+        fileList.innerHTML = '';
+        const currentTarget = formatSelect.value.toUpperCase();
+        const isPdf = currentTarget === 'PDF';
+
+        selectedFiles.forEach(file => {
+            // Güvenli uzantı yakalama
+            const ext = file.name.substring(file.name.lastIndexOf('.')).replace('.','').toUpperCase();
+            
+            const item = document.createElement('div');
+            item.className = 'file-item';
+            item.innerHTML = `
+                <span>📄 ${file.name}</span>
+                <div>
+                    <span class="format-badge">${ext}</span>
+                    <span class="arrow-badge">➡️</span>
+                    <span class="target-badge ${isPdf ? 'pdf-type' : ''} target-preview">${currentTarget}</span>
+                </div>
+            `;
+            fileList.appendChild(item);
+        });
+        fileList.style.display = 'block';
+    }
+
+    convertBtn.addEventListener('click', async () => {
+        if (selectedFiles.length === 0) return;
+
+        const formData = new FormData();
+        convertBtn.disabled = true;
+        loader.style.display = 'block';
+        dropZone.classList.remove('error-state');
+
+        const targetFormat = formatSelect.value;
+        const quality = qualitySlider.value;
+        const baseUrl = 'http://localhost:5196/api/ImageConverter';
+
+        try {
+            let response;
+            let downloadName = "";
+
+            // PDF VEYA ÇOKLU GÖRSEL SEÇİMİNDE DIRECT MULTIPLE ENDPOINT'E GİT
+            if (targetFormat === 'pdf' || selectedFiles.length > 1) {
+                selectedFiles.forEach(file => formData.append('files', file));
+                formData.append('targetFormat', targetFormat);
+                formData.append('quality', quality);
+
+                response = await fetch(`${baseUrl}/convert-multiple`, {
+                    method: 'POST',
+                    body: formData
+                });
+                downloadName = targetFormat === 'pdf' ? "birlestirilen_dokuman.pdf" : "donusturulen_gorseller.zip";
+            } 
+            // TEKLİ GÖRSEL DÖNÜŞÜMÜ
+            else {
+                formData.append('File', selectedFiles[0]);
+                formData.append('TargetFormat', targetFormat);
+                formData.append('Quality', quality);
+
+                response = await fetch(`${baseUrl}/convert`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const origName = selectedFiles[0].name.substring(0, selectedFiles[0].name.lastIndexOf('.'));
+                downloadName = `${origName}.${targetFormat}`;
+            }
+
+            if (!response.ok) {
+                const serverError = await response.text();
+                throw new Error(serverError || 'Backend dönüştürme hatası fırlattı.');
+            }
+
+            const blob = await response.blob();
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = downloadName;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            
+        } catch (error) {
+            // GERÇEK BİR HATA OLURSA ÇERÇEVEYİ KIRMIZI YAP VE HATAYI YAZ
+            dropZone.classList.add('error-state');
+            dropZoneText.textContent = `Hata: ${error.message}`;
+            console.error(error);
+        } finally {
+            convertBtn.disabled = false;
+            loader.style.display = 'none';
+        }
+    });
+</script>
+</body>
+</html>

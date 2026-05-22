@@ -1,0 +1,45 @@
+{
+  "version": 2,
+  "dgSpecHash": "4dcuEy/bsdg=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\ASUS\\ImageConverterAPI\\ImageConverterAPI.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ASUS\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.8\\microsoft.aspnetcore.openapi.10.0.8.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\microsoft.extensions.apidescription.server\\10.0.0\\microsoft.extensions.apidescription.server.10.0.0.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\microsoft.openapi\\2.4.1\\microsoft.openapi.2.4.1.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\pdfsharpcore\\1.3.63\\pdfsharpcore.1.3.63.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\sharpziplib\\1.3.3\\sharpziplib.1.3.3.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\sixlabors.fonts\\1.0.0-beta17\\sixlabors.fonts.1.0.0-beta17.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\sixlabors.imagesharp\\2.1.9\\sixlabors.imagesharp.2.1.9.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\swashbuckle.aspnetcore\\10.1.7\\swashbuckle.aspnetcore.10.1.7.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\10.1.7\\swashbuckle.aspnetcore.swagger.10.1.7.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\10.1.7\\swashbuckle.aspnetcore.swaggergen.10.1.7.nupkg.sha512",
+    "C:\\Users\\ASUS\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\10.1.7\\swashbuckle.aspnetcore.swaggerui.10.1.7.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "'SixLabors.ImageSharp' 2.1.9 paketinde önem derecesi yüksek olan bilinen bir https://github.com/advisories/GHSA-2cmq-823j-5qj8 güvenlik açığı var",
+      "projectPath": "C:\\Users\\ASUS\\ImageConverterAPI\\ImageConverterAPI.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\ASUS\\ImageConverterAPI\\ImageConverterAPI.csproj",
+      "libraryId": "SixLabors.ImageSharp",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    },
+    {
+      "code": "NU1902",
+      "level": "Warning",
+      "message": "'SixLabors.ImageSharp' 2.1.9 paketinde önem derecesi orta olan bilinen bir https://github.com/advisories/GHSA-rxmq-m78w-7wmc güvenlik açığı var",
+      "projectPath": "C:\\Users\\ASUS\\ImageConverterAPI\\ImageConverterAPI.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\ASUS\\ImageConverterAPI\\ImageConverterAPI.csproj",
+      "libraryId": "SixLabors.ImageSharp",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
+}
