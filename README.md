@@ -16,6 +16,12 @@ Bu proje, .NET 8 Web API mimarisi kullanılarak geliştirilmiş, yüksek perform
 - **Frontend:** HTML5, CSS3 (Modern UI/UX UI), Vanilla JavaScript (Fetch API & Blob Management)
 - **Performans:** Tüm dosya akışları sunucu diskine yazılmadan tamamen RAM üzerinde (`MemoryStream` ve `byte[]`) işlenmiştir.
 
+ ## 📱 Uygulama Görselleri
+| Yükleme | Ana Ekran |
+| :---: | :---: |
+| <img src="https://github.com/user-attachments/assets/e3dd88a4-b693-4d43-9c0b-610da9c9c971" width="100%" /> | <img src="https://github.com/user-attachments/assets/6b1ec78c-8acc-4920-9649-c1bc93fa6042" width="100%" /> |
+| **Dönüştürme İşlemi** | **Format Seçimi** |
+| <img src="https://github.com/user-attachments/assets/0625a3fe-f574-4dfe-8c30-2d839214b716" width="100%" /> | <img src="https://github.com/user-attachments/assets/023b1fba-35c9-42c6-97f7-6c9c1533b5a0" width="90%" /> |
 ## ⚙️ Kurulum ve Çalıştırma
 
 1. Projeyi bilgisayarınıza klonlayın:
