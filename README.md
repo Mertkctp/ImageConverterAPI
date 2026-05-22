@@ -21,3 +21,5 @@ Bu proje, .NET 8 Web API mimarisi kullanılarak geliştirilmiş, yüksek perform
 1. Projeyi bilgisayarınıza klonlayın:
    ```bash
    git clone [https://github.com/Mewrtkctp/ImageConverterAPI.git](https://github.com/Mertkctpe/ImageConverterAPI.git)
+
+   NOT:"Backend'in çalışması için local'de dotnet run yapılmalıdır"
